@@ -1,0 +1,3 @@
+numpy
+dynamixel-sdk
+pyyaml
