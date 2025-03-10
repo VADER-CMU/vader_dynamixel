@@ -1,0 +1,17 @@
+gello:
+  left:
+    u2d2_usb: "/dev/ttyUSB0"
+    u2d2_baudrate: 57600
+    ids: [1, 2, 3, 4, 5, 6, 7]
+  right:
+    u2d2_usb: "/dev/ttyUSB1"
+    u2d2_baudrate: 57600
+    ids: [1, 2, 3, 4, 5, 6, 7]
+gripper:
+  u2d2_usb: "/dev/ttyUSB2"
+  u2d2_baudrate: 57600
+  ids: [1,2,3,4]
+cutter:
+  u2d2_usb: "/dev/ttyUSB3"
+  u2d2_baudrate: 57600
+  ids: [1]
