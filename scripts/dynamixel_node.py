@@ -4,6 +4,8 @@ from vader_msgs.msg import CutterCommand, GripperCommand
 from driver import DynamixelDriver, FakeDynamixelDriver
 import yaml
 import os
+import numpy as np
+import time
 
 #!/usr/bin/env python
 def load_dynamixel_config():
@@ -14,19 +16,35 @@ def load_dynamixel_config():
 
 gripperDriver = None
 cutterDriver = None
-fakeDrivers = True
+fakeCutter = False
+fakeGripper = True
 
 def gripperCallback(data):
-    rospy.loginfo(rospy.get_caller_id() + " I heard %s", data)
+    rospy.loginfo(rospy.get_caller_id() + " I heard gripper %s", data)
     # Check and set torque enabled
     # Set joint targets according to gripper command percentage
     # TODO optionally disable torque
 
+def cutterTransferFunction(percentage):
+    return percentage * 3.6 * (np.pi / 180) # rad
+
 def cutterCallback(data):
-    rospy.loginfo(rospy.get_caller_id() + " I heard %s", data)
+    rospy.loginfo(rospy.get_caller_id() + " I heard cutter %s", data)
     # Check and set torque enabled
     # Set joint targets according to gripper command percentage
     # TODO optionally disable torque
+    joint_targets = [cutterTransferFunction(data.open_pct)]
+    try:
+        if not cutterDriver.torque_enabled():
+            cutterDriver.set_torque_mode(True)
+            rospy.loginfo("Torque enabled")
+            time.sleep(0.1)
+        cutterDriver.set_joints(joint_targets)
+        
+        # time.sleep(0.5)
+        # cutterDriver.set_torque_mode(False)
+    except Exception as e:
+        rospy.logerr(f"Failed to set joint positions: {e}")
 
 def main():
     global gripperDriver, cutterDriver
@@ -36,24 +54,32 @@ def main():
 
     # Initialize gripper and cutter drivers
     try:
-        if fakeDrivers:
+        if fakeGripper:
             gripperDriver = FakeDynamixelDriver(ids=config['gripper']['ids'])
-            cutterDriver = FakeDynamixelDriver(ids=config['cutter']['ids'])
         else:
             gripperDriver = DynamixelDriver(ids=config['gripper']['ids'], port=config['gripper']['u2d2_usb'],\
                                             baudrate=config['gripper']['u2d2_baudrate'])
-
+        if fakeCutter:
+            cutterDriver = FakeDynamixelDriver(ids=config['cutter']['ids'])
+        else:
             cutterDriver = DynamixelDriver(ids=config['cutter']['ids'], port=config['cutter']['u2d2_usb'],\
                                             baudrate=config['cutter']['u2d2_baudrate'])
     except Exception as e:
         rospy.logerr(f"Failed to initialize Dynamixel drivers: {e}")
         exit(1)
-
+    
+    cutterDriver.set_torque_mode(True)
+    gripperDriver.set_torque_mode(True)
+    rospy.loginfo("Torque enabled")
     rospy.Subscriber("gripper_command", GripperCommand, gripperCallback)
     rospy.Subscriber("cutter_command", CutterCommand, cutterCallback)
     rospy.loginfo("Dynamixel node initialized successfully")
+    cutterCallback(CutterCommand(open_pct=0))
     rospy.spin()
-
+    # Clean up
+    gripperDriver.close()
+    cutterDriver.close()
+    rospy.loginfo("Drivers closed, node is shutting down")
 if __name__ == '__main__':
     try:
         main()
