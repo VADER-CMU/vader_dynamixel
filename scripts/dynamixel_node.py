@@ -16,8 +16,8 @@ def load_dynamixel_config():
 
 gripperDriver = None
 cutterDriver = None
-fakeCutter = True
-fakeGripper = False
+fakeCutter = False
+fakeGripper = True
 
 def gripperTransferFunction(percentage):
     gripperMotor1Angle = (percentage/100) * (np.pi/180) * 100
@@ -38,8 +38,8 @@ def gripperCallback(data):
         rospy.logerr(f"Failed to set joint positions: {e}")
 
 def cutterTransferFunction(percentage):
-    MIN_ANGLE = 228.52
-    MAX_ANGLE = 342.77
+    MIN_ANGLE = 342.77
+    MAX_ANGLE = 228.52
     return ((percentage / 100) * (MAX_ANGLE - MIN_ANGLE) + MIN_ANGLE) * (np.pi / 180)# rad
 
 def cutterCallback(data):
@@ -89,8 +89,8 @@ def main():
     rospy.Subscriber("gripper_command", GripperCommand, gripperCallback)
     rospy.Subscriber("cutter_command", CutterCommand, cutterCallback)
     rospy.loginfo("Dynamixel node initialized successfully")
-    # cutterCallback(CutterCommand(open_pct=0))
-    gripperCallback(GripperCommand(open_pct=0))
+    cutterCallback(CutterCommand(open_pct=0))
+    # gripperCallback(GripperCommand(open_pct=0))
     rospy.spin()
     # Clean up
     gripperDriver.close()
