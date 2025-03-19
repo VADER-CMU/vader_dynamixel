@@ -10,7 +10,7 @@ gello:
 gripper:
   u2d2_usb: "/dev/serial/by-id/usb-FTDI_USB__-__Serial_Converter_FTA2U2O3-if00-port0"
   u2d2_baudrate: 57600
-  ids: [1,2,3]
+  ids: [1,2,3,4]
 cutter:
   u2d2_usb: "/dev/serial/by-id/usb-FTDI_USB__-__Serial_Converter_FT89I74E-if00-port0"
   u2d2_baudrate: 57600

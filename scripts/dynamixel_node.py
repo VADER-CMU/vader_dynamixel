@@ -16,14 +16,24 @@ def load_dynamixel_config():
 
 gripperDriver = None
 cutterDriver = None
-fakeCutter = False
-fakeGripper = True
+fakeCutter = True
+fakeGripper = False
 
 def gripperTransferFunction(percentage):
-    gripperMotor1Angle = (percentage/100) * (np.pi/180) * 100
-    gripperMotor2Angle = (percentage/100) * (np.pi/180) * 100
-    gripperMotor3Angle = (percentage/100) * (np.pi/180) * 100
-    return [gripperMotor1Angle, gripperMotor2Angle, gripperMotor3Angle]
+    GRIPPER1_MIN = 359
+    GRIPPER1_MAX = 180
+    GRIPPER2_MIN = 180
+    GRIPPER2_MAX = 302
+    GRIPPER3_MIN = 180
+    GRIPPER3_MAX = 270
+    GRIPPER4_MIN = 0
+    GRIPPER4_MAX = 123
+    return [
+        (percentage/100) *  (np.pi/180) *  ((GRIPPER1_MAX - GRIPPER1_MIN) + GRIPPER1_MIN),
+        (percentage/100) *  (np.pi/180) *  ((GRIPPER2_MAX - GRIPPER2_MIN) + GRIPPER2_MIN),
+        (percentage/100) *  (np.pi/180) *  180,
+        (percentage/100) *  (np.pi/180) *  ((GRIPPER4_MAX - GRIPPER4_MIN) + GRIPPER4_MIN),
+    ]
 
 def gripperCallback(data):
     rospy.loginfo(rospy.get_caller_id() + " I heard gripper %s", data)
@@ -89,8 +99,12 @@ def main():
     rospy.Subscriber("gripper_command", GripperCommand, gripperCallback)
     rospy.Subscriber("cutter_command", CutterCommand, cutterCallback)
     rospy.loginfo("Dynamixel node initialized successfully")
-    cutterCallback(CutterCommand(open_pct=0))
-    # gripperCallback(GripperCommand(open_pct=0))
+    # cutterCallback(CutterCommand(open_pct=0))
+    gripperCallback(GripperCommand(open_pct=0))
+    time.sleep(3)
+    gripperCallback(GripperCommand(open_pct=100))
+    time.sleep(3)
+    gripperCallback(GripperCommand(open_pct=0))
     rospy.spin()
     # Clean up
     gripperDriver.close()
