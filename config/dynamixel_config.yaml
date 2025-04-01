@@ -1,17 +1,14 @@
-gello:
-  left:
-    u2d2_usb: "/dev/ttyUSB0"
-    u2d2_baudrate: 57600
-    ids: [1, 2, 3, 4, 5, 6, 7]
-  right:
-    u2d2_usb: "/dev/ttyUSB1"
-    u2d2_baudrate: 57600
-    ids: [1, 2, 3, 4, 5, 6, 7]
 gripper:
   u2d2_usb: "/dev/serial/by-id/usb-FTDI_USB__-__Serial_Converter_FTA2U2O3-if00-port0"
   u2d2_baudrate: 57600
   ids: [1,2,3,4]
+  topics: 
+  - "/xarm/vader_gripper_fing1_pos_controller/command"
+  - "/xarm/vader_gripper_fing2_pos_controller/command"
+  - "/xarm/vader_gripper_thumb_pos_controller/command"
 cutter:
   u2d2_usb: "/dev/serial/by-id/usb-FTDI_USB__-__Serial_Converter_FT89I74E-if00-port0"
   u2d2_baudrate: 57600
   ids: [0]
+  topics:
+  - "/xarm/vader_cutter_pos_controller/command"

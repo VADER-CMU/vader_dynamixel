@@ -6,6 +6,7 @@ import yaml
 import os
 import numpy as np
 import time
+from std_msgs.msg import Float64
 
 #!/usr/bin/env python
 def load_dynamixel_config():
@@ -17,7 +18,8 @@ def load_dynamixel_config():
 gripperDriver = None
 cutterDriver = None
 fakeCutter = True
-fakeGripper = False
+fakeGripper = True
+config = None
 
 def gripperTransferFunction(percentage):
     GRIPPER1_MIN = 359
@@ -44,6 +46,11 @@ def gripperCallback(data):
             rospy.loginfo("Torque enabled")
             time.sleep(0.1)
         gripperDriver.set_joints(joint_targets)
+        if fakeGripper:
+            for topic in config['gripper']['topics']:
+                pub = rospy.Publisher(topic, Float64, queue_size=10)
+                pub.publish(joint_targets[0])
+                print('publishing', joint_targets[0], 'to', topic)
     except Exception as e:
         rospy.logerr(f"Failed to set joint positions: {e}")
 
@@ -65,6 +72,11 @@ def cutterCallback(data):
             time.sleep(0.1)
         # print(joint_targets)
         cutterDriver.set_joints(joint_targets)
+        if fakeCutter:
+            for topic in config['cutter']['topics']:
+                pub = rospy.Publisher(topic, Float64, queue_size=10)
+                pub.publish(joint_targets[0])
+                print('publishing', joint_targets[0], 'to', topic)
         
         # time.sleep(0.5)
         # cutterDriver.set_torque_mode(False)
@@ -72,7 +84,7 @@ def cutterCallback(data):
         rospy.logerr(f"Failed to set joint positions: {e}")
 
 def main():
-    global gripperDriver, cutterDriver
+    global gripperDriver, cutterDriver, config
     rospy.init_node('dynamixel_node', anonymous=True)
     # Load config
     config = load_dynamixel_config()
@@ -100,11 +112,17 @@ def main():
     rospy.Subscriber("cutter_command", CutterCommand, cutterCallback)
     rospy.loginfo("Dynamixel node initialized successfully")
     # cutterCallback(CutterCommand(open_pct=0))
+    # time.sleep(3)
+    # cutterCallback(CutterCommand(open_pct=100))
+    # time.sleep(3)
+    # cutterCallback(CutterCommand(open_pct=0))
+    # time.sleep(3)
+
     gripperCallback(GripperCommand(open_pct=0))
     time.sleep(3)
     gripperCallback(GripperCommand(open_pct=100))
     time.sleep(3)
-    gripperCallback(GripperCommand(open_pct=0))
+    # gripperCallback(GripperCommand(open_pct=0))
     rospy.spin()
     # Clean up
     gripperDriver.close()
