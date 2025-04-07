@@ -18,7 +18,7 @@ def load_dynamixel_config():
 gripperDriver = None
 cutterDriver = None
 fakeCutter = True
-fakeGripper = True
+fakeGripper = False
 config = None
 
 def gripperTransferFunction(percentage):
@@ -34,17 +34,17 @@ def gripperTransferFunction(percentage):
     else:
         GRIPPER1_MIN = 359
         GRIPPER1_MAX = 180
-        GRIPPER2_MIN = 180
-        GRIPPER2_MAX = 302
+        GRIPPER2_MIN = 359
+        GRIPPER2_MAX = 180
         GRIPPER3_MIN = 180
         GRIPPER3_MAX = 270
-        GRIPPER4_MIN = 0
-        GRIPPER4_MAX = 123
+        GRIPPER4_MIN = 180
+        GRIPPER4_MAX = 0
         return [
-            (percentage/100) *  (np.pi/180) *  ((GRIPPER1_MAX - GRIPPER1_MIN) + GRIPPER1_MIN),
-            (percentage/100) *  (np.pi/180) *  ((GRIPPER2_MAX - GRIPPER2_MIN) + GRIPPER2_MIN),
+            (np.pi/180) *  ((percentage/100) *  (GRIPPER1_MAX - GRIPPER1_MIN) + GRIPPER1_MIN),
+            (np.pi/180) *  ((percentage/100) * (GRIPPER2_MAX - GRIPPER2_MIN) + GRIPPER2_MIN),
             (percentage/100) *  (np.pi/180) *  180,
-            (percentage/100) *  (np.pi/180) *  ((GRIPPER4_MAX - GRIPPER4_MIN) + GRIPPER4_MIN),
+            (np.pi/180) *  ((percentage/100) * (GRIPPER4_MAX - GRIPPER4_MIN) + GRIPPER4_MIN),
         ]
 
 def gripperCallback(data):
@@ -55,6 +55,7 @@ def gripperCallback(data):
             gripperDriver.set_torque_mode(True)
             rospy.loginfo("Torque enabled")
             time.sleep(0.1)
+        print(joint_targets)
         gripperDriver.set_joints(joint_targets)
         if fakeGripper:
             for topic in config['gripper']['topics']:
@@ -127,11 +128,11 @@ def main():
     rospy.Subscriber("cutter_command", CutterCommand, cutterCallback)
     rospy.loginfo("Dynamixel node initialized successfully")
     cutterCallback(CutterCommand(open_pct=0))
-    time.sleep(3)
-    cutterCallback(CutterCommand(open_pct=100))
-    time.sleep(3)
-    cutterCallback(CutterCommand(open_pct=0))
-    time.sleep(3)
+    # time.sleep(3)
+    # cutterCallback(CutterCommand(open_pct=100))
+    # time.sleep(3)
+    # cutterCallback(CutterCommand(open_pct=0))
+    # time.sleep(3)
 
     gripperCallback(GripperCommand(open_pct=0))
     time.sleep(3)
