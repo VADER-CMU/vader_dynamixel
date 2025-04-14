@@ -18,13 +18,13 @@ def load_dynamixel_config():
 gripperDriver = None
 cutterDriver = None
 fakeCutter = True
-fakeGripper = False
+fakeGripper = True
 config = None
 
 def gripperTransferFunction(percentage):
     if fakeGripper:
         finger_open = 0
-        finger_closed = 1.5
+        finger_closed = 1.
         return [
             (percentage/100) *  ((finger_open - finger_closed)) + finger_closed,
             (percentage/100) *  ((finger_open - finger_closed)) + finger_closed,
@@ -127,18 +127,9 @@ def main():
     rospy.Subscriber("gripper_command", GripperCommand, gripperCallback)
     rospy.Subscriber("cutter_command", CutterCommand, cutterCallback)
     rospy.loginfo("Dynamixel node initialized successfully")
-    cutterCallback(CutterCommand(open_pct=0))
-    # time.sleep(3)
-    # cutterCallback(CutterCommand(open_pct=100))
-    # time.sleep(3)
-    # cutterCallback(CutterCommand(open_pct=0))
-    # time.sleep(3)
+    cutterCallback(CutterCommand(open_pct=100))
 
-    gripperCallback(GripperCommand(open_pct=0))
-    time.sleep(3)
     gripperCallback(GripperCommand(open_pct=100))
-    time.sleep(3)
-    gripperCallback(GripperCommand(open_pct=0))
     rospy.spin()
     # Clean up
     gripperDriver.close()
