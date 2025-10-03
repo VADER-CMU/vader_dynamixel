@@ -33,11 +33,11 @@ def gripperTransferFunction(open_percent):
         ]
     else:
         GRIPPER1_CLOSED = 270
-        GRIPPER1_OPEN = 0
+        GRIPPER1_OPEN = 30
         GRIPPER2_CLOSED = 270
-        GRIPPER2_OPEN = 0
+        GRIPPER2_OPEN = 30
         GRIPPER4_CLOSED = 270
-        GRIPPER4_OPEN = 0
+        GRIPPER4_OPEN = 30
         return [
             (np.pi/180) *  ((open_percent/100) *  (GRIPPER1_OPEN - GRIPPER1_CLOSED) + GRIPPER1_CLOSED),
             (np.pi/180) *  ((open_percent/100) * (GRIPPER2_OPEN - GRIPPER2_CLOSED) + GRIPPER2_CLOSED),
