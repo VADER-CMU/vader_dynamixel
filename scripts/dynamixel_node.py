@@ -21,30 +21,28 @@ fakeCutter = True
 fakeGripper = False
 config = None
 
-def gripperTransferFunction(percentage):
+def gripperTransferFunction(open_percent):
     if fakeGripper:
         finger_open = 0
         finger_closed = 1.
         return [
-            (percentage/100) *  ((finger_open - finger_closed)) + finger_closed,
-            (percentage/100) *  ((finger_open - finger_closed)) + finger_closed,
-            (percentage/100) *  ((finger_open - finger_closed)) + finger_closed,
-            (percentage/100) *  ((finger_open - finger_closed)) + finger_closed,
+            (open_percent/100) *  ((finger_open - finger_closed)) + finger_closed,
+            (open_percent/100) *  ((finger_open - finger_closed)) + finger_closed,
+            (open_percent/100) *  ((finger_open - finger_closed)) + finger_closed,
+            (open_percent/100) *  ((finger_open - finger_closed)) + finger_closed,
         ]
     else:
-        GRIPPER1_MIN = 359
-        GRIPPER1_MAX = 180
-        GRIPPER2_MIN = 359
-        GRIPPER2_MAX = 180
-        GRIPPER3_MIN = 180
-        GRIPPER3_MAX = 270
-        GRIPPER4_MIN = 133
-        GRIPPER4_MAX = 314
+        GRIPPER1_CLOSED = 270
+        GRIPPER1_OPEN = 0
+        GRIPPER2_CLOSED = 270
+        GRIPPER2_OPEN = 0
+        GRIPPER4_CLOSED = 270
+        GRIPPER4_OPEN = 0
         return [
-            (np.pi/180) *  ((percentage/100) *  (GRIPPER1_MAX - GRIPPER1_MIN) + GRIPPER1_MIN),
-            (np.pi/180) *  ((percentage/100) * (GRIPPER2_MAX - GRIPPER2_MIN) + GRIPPER2_MIN),
-            (percentage/100) *  (np.pi/180) *  180,
-            (np.pi/180) *  ((percentage/100) * (GRIPPER4_MAX - GRIPPER4_MIN) + GRIPPER4_MIN),
+            (np.pi/180) *  ((open_percent/100) *  (GRIPPER1_OPEN - GRIPPER1_CLOSED) + GRIPPER1_CLOSED),
+            (np.pi/180) *  ((open_percent/100) * (GRIPPER2_OPEN - GRIPPER2_CLOSED) + GRIPPER2_CLOSED),
+            0,#(open_percent/100) *  (np.pi/180) *  180,
+            (np.pi/180) *  ((open_percent/100) * (GRIPPER4_OPEN - GRIPPER4_CLOSED) + GRIPPER4_CLOSED),
         ]
 
 def gripperCallback(data):
@@ -65,15 +63,15 @@ def gripperCallback(data):
     except Exception as e:
         rospy.logerr(f"Failed to set joint positions: {e}")
 
-def cutterTransferFunction(percentage):
+def cutterTransferFunction(open_percent):
     if fakeCutter:
         cutter_open = 0
         cutter_closed = -0.75
-        return (percentage / 100) * (cutter_open - cutter_closed) + cutter_closed
+        return (open_percent / 100) * (cutter_open - cutter_closed) + cutter_closed
     else:    
         MIN_ANGLE = 342.77
         MAX_ANGLE = 228.52
-        return ((percentage / 100) * (MAX_ANGLE - MIN_ANGLE) + MIN_ANGLE) * (np.pi / 180)# rad
+        return ((open_percent / 100) * (MAX_ANGLE - MIN_ANGLE) + MIN_ANGLE) * (np.pi / 180)# rad
 
 def cutterCallback(data):
     rospy.loginfo(rospy.get_caller_id() + " I heard cutter %s", data)
