@@ -70,7 +70,7 @@ def cutterTransferFunction(open_percent):
         return (open_percent / 100) * (cutter_open - cutter_closed) + cutter_closed
     else:    
         MIN_ANGLE = 342.77
-        MAX_ANGLE = 228.52
+        MAX_ANGLE = 205.05
         return ((open_percent / 100) * (MAX_ANGLE - MIN_ANGLE) + MIN_ANGLE) * (np.pi / 180)# rad
 
 def cutterCallback(data):
