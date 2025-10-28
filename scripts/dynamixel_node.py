@@ -17,7 +17,7 @@ def load_dynamixel_config():
 
 gripperDriver = None
 cutterDriver = None
-fakeCutter = True
+fakeCutter = False
 fakeGripper = False
 config = None
 
