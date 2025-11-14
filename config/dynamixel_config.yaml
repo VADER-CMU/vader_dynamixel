@@ -1,7 +1,7 @@
 gripper:
   u2d2_usb: "/dev/serial/by-id/usb-FTDI_USB__-__Serial_Converter_FTA2U12T-if00-port0"
   u2d2_baudrate: 57600
-  ids: [1,2,3,4]
+  ids: [1,2,4]
   topics: 
   - "/xarm/vader_gripper_fing1_pos_controller/command"
   - "/xarm/vader_gripper_fing2_pos_controller/command"

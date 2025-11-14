@@ -29,7 +29,6 @@ def gripperTransferFunction(open_percent):
             (open_percent/100) *  ((finger_open - finger_closed)) + finger_closed,
             (open_percent/100) *  ((finger_open - finger_closed)) + finger_closed,
             (open_percent/100) *  ((finger_open - finger_closed)) + finger_closed,
-            (open_percent/100) *  ((finger_open - finger_closed)) + finger_closed,
         ]
     else:
         GRIPPER1_CLOSED = 270
@@ -41,7 +40,6 @@ def gripperTransferFunction(open_percent):
         return [
             (np.pi/180) *  ((open_percent/100) *  (GRIPPER1_OPEN - GRIPPER1_CLOSED) + GRIPPER1_CLOSED),
             (np.pi/180) *  ((open_percent/100) * (GRIPPER2_OPEN - GRIPPER2_CLOSED) + GRIPPER2_CLOSED),
-            0,#(open_percent/100) *  (np.pi/180) *  180,
             (np.pi/180) *  ((open_percent/100) * (GRIPPER4_OPEN - GRIPPER4_CLOSED) + GRIPPER4_CLOSED),
         ]
 
