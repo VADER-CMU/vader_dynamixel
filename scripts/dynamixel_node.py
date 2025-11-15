@@ -49,9 +49,9 @@ def gripperCallback(data):
     try:
         if not gripperDriver.torque_enabled():
             gripperDriver.set_torque_mode(True)
-            rospy.loginfo("Torque enabled")
+            # rospy.loginfo("Torque enabled")
             time.sleep(0.1)
-        print(joint_targets)
+        # print(joint_targets)
         gripperDriver.set_joints(joint_targets)
         if fakeGripper:
             for topic in config['gripper']['topics']:
@@ -80,7 +80,7 @@ def cutterCallback(data):
     try:
         if not cutterDriver.torque_enabled():
             cutterDriver.set_torque_mode(True)
-            rospy.loginfo("Torque enabled")
+            # rospy.loginfo("Torque enabled")
             time.sleep(0.1)
         # print(joint_targets)
         cutterDriver.set_joints(joint_targets)
